@@ -1,0 +1,44 @@
+# 2
+print('№2')
+import random
+
+def swap_min_max(matrix):
+    rows = len(matrix)
+    cols = len(matrix[0])
+
+    min_element = min([min(row) for row in matrix])
+    max_element = max([max(row) for row in matrix])
+
+    # индексы строки и столбца для наименьшего
+    min_row = 0
+    min_col = 0
+    for i in range(rows):
+        for j in range(cols):
+            if matrix[i][j] == min_element:
+                min_row = i
+                min_col = j
+
+    #  индексы строки и столбца для наибольшего
+    max_row = 0
+    max_col = 0
+    for i in range(rows):
+        for j in range(cols):
+            if matrix[i][j] == max_element:
+                max_row = i
+                max_col = j
+
+    # Меняем местами значения
+    matrix[min_row][min_col], matrix[max_row][max_col] = matrix[max_row][max_col], matrix[min_row][min_col]
+
+    return matrix
+rows = 5
+cols = 4
+matrix = [[random.randint(1, 10) for _ in range(cols)] for _ in range(rows)]
+print("Исходная матрица:")
+for row in matrix:
+    print(row)
+# Меняем местами
+result_matrix = swap_min_max(matrix)
+print("Матрица после замены:")
+for row in result_matrix:
+    print(row)
