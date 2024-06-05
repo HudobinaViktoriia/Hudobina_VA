@@ -1,0 +1,33 @@
+import java.util.Stack;
+
+public class BracketValidator {
+    public static void main(String[] args) {
+        // Примеры проверки
+        System.out.println(validateBrackets("()")); // true
+        System.out.println(validateBrackets("(()()((())))")); // true
+        System.out.println(validateBrackets("(((()())()")); // false
+    }
+
+    // Функция для проверки корректности скобок
+    public static boolean validateBrackets(String s) {
+        // Инициализируем стек для отслеживания скобок
+        Stack<Character> stack = new Stack<>();
+
+        // Проходим по каждому символу в строке
+        for (char ch : s.toCharArray()) {
+            if (ch == '(') {
+                // Если это открывающая скобка, добавляем ее в стек
+                stack.push(ch);
+            } else if (ch == ')') {
+                // Если это закрывающая скобка, проверяем стек
+                if (stack.isEmpty() || stack.pop() != '(') {
+                    // Если стек пуст или верхний элемент не соответствует открывающей скобке
+                    return false;
+                }
+            }
+        }
+
+        // Если стек пуст после обработки всей строки, скобки корректны
+        return stack.isEmpty();
+    }
+}
