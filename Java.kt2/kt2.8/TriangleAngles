@@ -1,0 +1,54 @@
+import java.util.Scanner;
+
+public class TriangleAngles {
+    public static void main(String[] args) {
+        // Создаем объект Scanner для считывания ввода пользователя
+        Scanner scanner = new Scanner(System.in);
+
+        // Запрашиваем у пользователя ввод длин отрезков
+        System.out.print("Введите длину первого отрезка: ");
+        double a = scanner.nextDouble();
+
+        System.out.print("Введите длину второго отрезка: ");
+        double b = scanner.nextDouble();
+
+        System.out.print("Введите длину третьего отрезка: ");
+        double c = scanner.nextDouble();
+
+        // Проверяем условие существования треугольника
+        if (isValidTriangle(a, b, c)) {
+            // Вычисляем углы треугольника с помощью теоремы косинусов
+            double angleA = calculateAngle(b, c, a);
+            double angleB = calculateAngle(a, c, b);
+            double angleC = calculateAngle(a, b, c);
+
+            // Находим наибольший внутренний угол
+            double maxAngle = Math.max(angleA, Math.max(angleB, angleC));
+
+            // Находим наибольший внешний угол
+            double largestExteriorAngle = 180.0 - maxAngle;
+
+            // Выводим результат
+            System.out.println("Из данных отрезков можно составить треугольник.");
+            System.out.printf("Наибольший внешний угол: %.2f градусов%n", largestExteriorAngle);
+        } else {
+            System.out.println("Из данных отрезков нельзя составить треугольник.");
+        }
+
+        // Закрываем Scanner
+        scanner.close();
+    }
+
+    // Метод для проверки, можно ли составить треугольник из заданных отрезков
+    private static boolean isValidTriangle(double a, double b, double c) {
+        return (a + b > c) && (a + c > b) && (b + c > a);
+    }
+
+    // Метод для вычисления угла по теореме косинусов
+    private static double calculateAngle(double side1, double side2, double oppositeSide) {
+        // Используем теорему косинусов для нахождения угла в радианах
+        double angleRad = Math.acos((side1 * side1 + side2 * side2 - oppositeSide * oppositeSide) / (2 * side1 * side2));
+        // Переводим угол из радиан в градусы
+        return Math.toDegrees(angleRad);
+    }
+}
