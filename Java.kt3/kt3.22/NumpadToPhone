@@ -1,0 +1,44 @@
+import java.util.Scanner;
+
+public class NumpadToPhone {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Ввод строки чисел с нумпада
+        System.out.println("Введите строку чисел с нумпада:");
+        String numpadInput = scanner.nextLine();
+
+        // Преобразование строки
+        String phoneOutput = convertNumpadToPhone(numpadInput);
+
+        // Вывод результата
+        System.out.println("Преобразованная строка для телефонной клавиатуры: " + phoneOutput);
+
+        // Закрываем Scanner
+        scanner.close();
+    }
+
+    // Метод для преобразования строки чисел с нумпада в строку для телефонной клавиатуры
+    private static String convertNumpadToPhone(String input) {
+        // Создаем отображение нумпад -> телефонная клавиатура
+        char[] numpadToPhoneMap = new char[10];
+        numpadToPhoneMap['0' - '0'] = '0'; // 0 stays 0
+        numpadToPhoneMap['1' - '0'] = '7'; // 1 -> 7
+        numpadToPhoneMap['2' - '0'] = '8'; // 2 -> 8
+        numpadToPhoneMap['3' - '0'] = '9'; // 3 -> 9
+        numpadToPhoneMap['4' - '0'] = '4'; // 4 -> 4
+        numpadToPhoneMap['5' - '0'] = '5'; // 5 -> 5
+        numpadToPhoneMap['6' - '0'] = '6'; // 6 -> 6
+        numpadToPhoneMap['7' - '0'] = '1'; // 7 -> 1
+        numpadToPhoneMap['8' - '0'] = '2'; // 8 -> 2
+        numpadToPhoneMap['9' - '0'] = '3'; // 9 -> 3
+
+        // Строим новую строку с использованием отображения
+        StringBuilder output = new StringBuilder();
+        for (char c : input.toCharArray()) {
+            output.append(numpadToPhoneMap[c - '0']);
+        }
+
+        return output.toString();
+    }
+}
