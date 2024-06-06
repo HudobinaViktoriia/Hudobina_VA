@@ -1,0 +1,54 @@
+import java.util.Scanner;
+
+public class SumOfMultiplesWithAllDivisors {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Ввод данных
+        System.out.print("Введите значение M: ");
+        int M = scanner.nextInt();
+
+        System.out.print("Введите значение N: ");
+        int N = scanner.nextInt();
+
+        System.out.print("Введите делители через пробел: ");
+        scanner.nextLine(); // Сбросить символ новой строки
+        String[] divisorsStr = scanner.nextLine().split(" ");
+        int[] divisors = new int[divisorsStr.length];
+
+        for (int i = 0; i < divisorsStr.length; i++) {
+            divisors[i] = Integer.parseInt(divisorsStr[i]);
+        }
+
+        // Вычисление суммы чисел, кратных всем делителям в заданном диапазоне
+        int sum = calculateSumOfMultiplesWithAllDivisors(M, N, divisors);
+
+        // Вывод результата
+        System.out.println("Сумма чисел в диапазоне от " + M + " до " + N + ", которые делятся на все указанные делители: " + sum);
+
+        // Закрываем Scanner
+        scanner.close();
+    }
+
+    // Метод для вычисления суммы чисел, кратных всем указанным делителям в диапазоне
+    private static int calculateSumOfMultiplesWithAllDivisors(int M, int N, int[] divisors) {
+        int sum = 0;
+        boolean isMultiple;
+
+        for (int i = M; i <= N; i++) {
+            isMultiple = true;
+
+            for (int divisor : divisors) {
+                if (i % divisor != 0) {
+                    isMultiple = false;
+                    break;
+                }
+            }
+
+            if (isMultiple) {
+                sum += i;
+            }
+        }
+        return sum;
+    }
+}
