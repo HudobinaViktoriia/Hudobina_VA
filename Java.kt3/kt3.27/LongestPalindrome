@@ -1,0 +1,51 @@
+import java.util.Scanner;
+
+public class LongestPalindrome {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Получение строки от пользователя
+        System.out.print("Введите строку: ");
+        String str = scanner.nextLine();
+
+        // Поиск длиннейшего палиндрома
+        int longestPalindromeLength = findLongestPalindromeLength(str);
+
+        // Вывод результата
+        System.out.println("Длиннейший палиндром в строке: " + longestPalindromeLength);
+
+        // Закрытие Scanner
+        scanner.close();
+    }
+
+    // Метод для поиска длиннейшего палиндрома в строке
+    private static int findLongestPalindromeLength(String str) {
+        int maxLength = 0;
+
+        for (int i = 0; i < str.length(); i++) {
+            // Для каждого символа строки проверяем как далеко можно расширить палиндром в обе стороны
+            int length1 = expandFromCenter(str, i, i); // Для палиндромов с нечетной длиной
+            int length2 = expandFromCenter(str, i, i + 1); // Для палиндромов с четной длиной
+
+            // Выбираем максимальную длину палиндрома
+            int currentLength = Math.max(length1, length2);
+
+            // Обновляем длину самого длинного палиндрома
+            maxLength = Math.max(maxLength, currentLength);
+        }
+
+        return maxLength;
+    }
+
+    // Метод для расширения палиндрома от центра
+    private static int expandFromCenter(String str, int left, int right) {
+        // Пока символы слева и справа равны и строка не закончилась
+        while (left >= 0 && right < str.length() && str.charAt(left) == str.charAt(right)) {
+            // Увеличиваем расстояние от центра в обе стороны
+            left--;
+            right++;
+        }
+        // Возвращаем длину палиндрома
+        return right - left - 1;
+    }
+}
