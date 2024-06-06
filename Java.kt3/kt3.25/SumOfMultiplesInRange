@@ -1,0 +1,47 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class SumOfMultiplesInRange {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Ввод данных
+        System.out.print("Введите значение M: ");
+        int M = scanner.nextInt();
+
+        System.out.print("Введите значение N: ");
+        int N = scanner.nextInt();
+
+        List<Integer> divisors = new ArrayList<>();
+        System.out.println("Введите делители (введите любое нечисловое значение для завершения ввода):");
+
+        // Считываем делители
+        while (scanner.hasNextInt()) {
+            divisors.add(scanner.nextInt());
+        }
+
+        // Вычисление суммы чисел, кратных делителям в заданном диапазоне
+        int sum = calculateSumOfMultiplesInRange(M, N, divisors);
+
+        // Вывод результата
+        System.out.println("Сумма чисел в диапазоне от " + M + " до " + N + ", которые делятся на указанные делители: " + sum);
+
+        // Закрываем Scanner
+        scanner.close();
+    }
+
+    // Метод для вычисления суммы чисел, кратных заданным делителям в диапазоне
+    private static int calculateSumOfMultiplesInRange(int M, int N, List<Integer> divisors) {
+        int sum = 0;
+        for (int i = M; i <= N; i++) {
+            for (int divisor : divisors) {
+                if (i % divisor == 0) {
+                    sum += i;
+                    break; // Число добавляется только один раз, даже если оно кратно нескольким делителям
+                }
+            }
+        }
+        return sum;
+    }
+}
