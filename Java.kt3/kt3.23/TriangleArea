@@ -1,0 +1,42 @@
+
+import java.util.Scanner;
+
+public class TriangleArea {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Ввод длин сторон треугольника
+        System.out.print("Введите длину стороны a: ");
+        double a = scanner.nextDouble();
+        System.out.print("Введите длину стороны b: ");
+        double b = scanner.nextDouble();
+        System.out.print("Введите длину стороны c: ");
+        double c = scanner.nextDouble();
+
+        // Проверка, можно ли составить треугольник из данных сторон
+        if (isValidTriangle(a, b, c)) {
+            // Вычисление площади треугольника по формуле Герона
+            double area = calculateArea(a, b, c);
+            // Вывод результата
+            System.out.println("Площадь треугольника: " + area);
+        } else {
+            System.out.println("Невозможно составить треугольник с заданными сторонами.");
+        }
+
+        // Закрываем Scanner
+        scanner.close();
+    }
+
+    // Метод для проверки возможности составить треугольник
+    private static boolean isValidTriangle(double a, double b, double c) {
+        return (a + b > c) && (a + c > b) && (b + c > a);
+    }
+
+    // Метод для вычисления площади треугольника по формуле Герона
+    private static double calculateArea(double a, double b, double c) {
+        // Вычисление полупериметра
+        double s = (a + b + c) / 2;
+        // Вычисление площади
+        return Math.sqrt(s * (s - a) * (s - b) * (s - c));
+    }
+}
