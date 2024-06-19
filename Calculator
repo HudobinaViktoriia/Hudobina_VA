@@ -1,0 +1,172 @@
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+import java.util.stream.Collectors;
+
+public class Calculator {
+
+    private static final String HISTORY_FILE = "calculator_history.txt";
+    private static List<String> history = new ArrayList<>();
+
+    public static void main(String[] args) {
+        loadHistory();
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.print("Введите уравнение (или нажмите 'q' для выхода, 'history' для просмотра истории): ");
+            String input = scanner.nextLine();
+
+            if (input.equals("q")) {
+                break;
+            } else if (input.equals("history")) {
+                printHistory();
+                continue;
+            }
+
+            try {
+                double result = evaluate(input);
+                System.out.println("Result: " + result);
+                history.add(input + " = " + result);
+                saveHistory();
+            } catch (Exception e) {
+                System.out.println("Invalid equation.");
+            }
+        }
+
+        scanner.close();
+    }
+
+    private static double evaluate(String equation) throws Exception {
+        List<String> tokens = tokenize(equation);
+        Deque<Double> values = new ArrayDeque<>();
+        Deque<String> operators = new ArrayDeque<>();
+
+        for (int i = 0; i < tokens.size(); i++) {
+            String token = tokens.get(i);
+
+            if (isNumber(token)) {
+                values.push(Double.parseDouble(token));
+            } else if (token.equals("|")) {
+                int startIndex = ++i;
+                int openParentheses = 1;
+                StringBuilder subExpression = new StringBuilder();
+
+                while (i < tokens.size() && openParentheses > 0) {
+                    if (tokens.get(i).equals("(")) openParentheses++;
+                    if (tokens.get(i).equals(")")) openParentheses--;
+                    subExpression.append(tokens.get(i++));
+                }
+
+                if (openParentheses != 0) throw new Exception("Mismatched parentheses");
+                double subResult = evaluate(subExpression.substring(0, subExpression.length() - 1));
+                values.push(Math.abs(subResult));
+            } else {
+                while (!operators.isEmpty() && precedence(operators.peek()) >= precedence(token)) {
+                    processOperator(values, operators.pop());
+                }
+                operators.push(token);
+            }
+        }
+
+        while (!operators.isEmpty()) {
+            processOperator(values, operators.pop());
+        }
+
+        return values.pop();
+    }
+
+    private static List<String> tokenize(String equation) {
+        List<String> tokens = new ArrayList<>();
+        Matcher matcher = Pattern.compile("\\d+\\.?\\d*|\\(|\\)|[+\\-*/%^|]").matcher(equation.replaceAll(" ", ""));
+        while (matcher.find()) {
+            tokens.add(matcher.group());
+        }
+        return tokens;
+    }
+
+    private static boolean isNumber(String token) {
+        try {
+            Double.parseDouble(token);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private static int precedence(String operator) {
+        switch (operator) {
+            case "^":
+                return 4;
+            case "*":
+            case "/":
+            case "%":
+            case "//":
+                return 3;
+            case "+":
+            case "-":
+                return 2;
+            case "|":
+                return 1;
+            default:
+                return -1;
+        }
+    }
+
+    private static void processOperator(Deque<Double> values, String operator) {
+        if (values.size() < 2 && !operator.equals("|")) {
+            throw new IllegalArgumentException("Invalid equation");
+        }
+
+        double b = values.pop();
+        double a = operator.equals("|") ? 0 : values.pop(); // Use 0 for unary operations
+
+        switch (operator) {
+            case "+":
+                values.push(a + b);
+                break;
+            case "-"
+values.push(a - b);
+                break;
+            case "*":
+                values.push(a * b);
+                break;
+            case "/":
+                values.push(a / b);
+                break;
+            case "//":
+                values.push((double) ((int) a / (int) b));
+                break;
+            case "%":
+                values.push(a % b);
+                break;
+            case "^":
+                values.push(Math.pow(a, b));
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown operator: " + operator);
+        }
+    }
+
+    private static void saveHistory() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(HISTORY_FILE, true))) {
+            for (String equation : history) {
+                writer.write(equation + "\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void loadHistory() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(HISTORY_FILE))) {
+            history = reader.lines().collect(Collectors.toList());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void printHistory() {
+        System.out.println("Calculation History:");
+        history.forEach(System.out::println);
+    }
+}
