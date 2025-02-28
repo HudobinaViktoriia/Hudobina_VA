@@ -1,0 +1,125 @@
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Scanner;
+
+// Model - Математический калькулятор
+class Calculator {
+    private String equation;
+    private double result;
+
+    public Calculator() {}
+
+    public void setEquation(String equation) {
+        this.equation = equation;
+    }
+
+    public double calculate() {
+        try {
+            // Разбиваем уравнение на токены
+            String[] tokens = equation.split(" ");
+
+            // Проверяем корректность уравнения
+            if (tokens.length > 200 || !Character.isDigit(equation.charAt(0)) || !Character.isDigit(equation.charAt(equation.length() - 1))) {
+                throw new IllegalArgumentException("Некорректное уравнение");
+            }
+
+            // Используем алгоритм с двумя стеками
+            Deque<Double> values = new ArrayDeque<>();
+            Deque<Character> operators = new ArrayDeque<>();
+
+            for (String token : tokens) {
+                if (token.matches("-?\\d+")) {
+                    values.push(Double.parseDouble(token));
+                } else {
+                    char op = token.charAt(0);
+                    while (!operators.isEmpty() && hasPrecedence(op, operators.peek())) {
+                        applyOperator(operators, values);
+                    }
+                    operators.push(op);
+                }
+            }
+
+            while (!operators.isEmpty()) {
+                applyOperator(operators, values);
+            }
+
+            result = values.pop();
+            return result;
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Ошибка при вычислении: " + e.getMessage());
+        }
+    }
+
+    private boolean hasPrecedence(char op1, char op2) {
+        int precedence1 = getPrecedence(op1);
+        int precedence2 = getPrecedence(op2);
+        return precedence1 > precedence2;
+    }
+
+    private int getPrecedence(char op) {
+        switch (op) {
+            case '+':
+            case '-': return 1;
+            case '*':
+            case '/': return 2;
+            case '^': return 3;
+            default: return -1;
+        }
+    }
+
+    private void applyOperator(Deque<Character> operators, Deque<Double> values) {
+        char operator = operators.pop();
+        double b = values.pop();
+        double a = values.pop();
+
+        switch (operator) {
+            case '+': values.push(a + b); break;
+            case '-': values.push(a - b); break;
+            case '*': values.push(a * b); break;
+            case '/': values.push(a / b); break;
+            case '^': values.push(Math.pow(a, b)); break;
+        }
+    }
+}
+
+// View - Интерфейс пользователя
+class CalculatorView {
+    public void displayResult(double result) {
+        System.out.println("Результат: " + result);
+    }
+
+    public void displayError(String error) {
+        System.out.println("Ошибка: " + error);
+    }
+}
+
+// Controller - Контроллер
+class CalculatorController {
+    private Calculator calculator;
+    private CalculatorView view;
+
+    public CalculatorController() {
+        calculator = new Calculator();
+        view = new CalculatorView();
+    }
+
+    public void calculateEquation(String equation) {
+        try {
+            calculator.setEquation(equation);
+            double result = calculator.calculate();
+            view.displayResult(result);
+        } catch (IllegalArgumentException e) {
+            view.displayError(e.getMessage());
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        CalculatorController controller = new CalculatorController();
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Введите уравнение:");
+        String equation = scanner.nextLine();
+        controller.calculateEquation(equation);
+    }
+}
